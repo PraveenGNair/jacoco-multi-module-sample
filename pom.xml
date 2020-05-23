@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.praveen.samples.jacoco.multimodule</groupId>
+  <artifactId>jacoco-multi-module-sample</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>jacoco-multi-module-sample</name>
+  <description>Example to show how to merge test reports of unit, integration and functional tests
+    onto one combined jacoco report.
+  </description>
+  <modules>
+    <module>module1</module>
+    <module>module2</module>
+    <module>module3</module>
+  </modules>
+
+  <properties>
+    <skip.unit.tests>false</skip.unit.tests>
+    <skip.integration.tests>true</skip.integration.tests>
+    <itCoverageAgent></itCoverageAgent>
+    <build-helper-maven-plugin.version>3.1.0</build-helper-maven-plugin.version>
+    <maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
+    <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <code.coverage.project.folder>${basedir}/../</code.coverage.project.folder>
+    <code.coverage.overall.data.folder>${basedir}/target/</code.coverage.overall.data.folder>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <!-- profile for Unit test only -->
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <!--profile for Integration test only -->
+    <profile>
+      <id>integration-test</id>
+      <properties>
+        <skip.integration.tests>false</skip.integration.tests>
+        <skip.unit.tests>true</skip.unit.tests>
+      </properties>
+    </profile>
+    <!-- Both Unit and Integration tests combined -->
+    <profile>
+      <id>testAll</id>
+      <properties>
+        <skip.integration.tests>false</skip.integration.tests>
+        <skip.unit.tests>false</skip.unit.tests>
+      </properties>
+    </profile>
+  </profiles>
+
+  <build>
+    <plugins>
+      <!-- UNIT test 'mvn clean install' (optionally: -P dev) by default skips Integration tests-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19.1</version>
+        <configuration>
+          <skipTests>${skip.unit.tests}</skipTests>
+          <excludes>
+            <exclude>**/*IntegrationTest.java</exclude>
+          </excludes>
+          <forkCount>1</forkCount>
+        </configuration>
+      </plugin>
+
+      <!-- INTEGRATION test via 'mvn clean install -P integration-test -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven-failsafe-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <skipTests>${skip.integration.tests}</skipTests>
+              <includes>
+                <include>**/*IntegrationTest.java</include>
+              </includes>
+              <reuseForks>true</reuseForks>
+              <!-- When running as a Maven plugin, the JaCoCo agent configuration is prepared by invoking the prepare-agent
+              or prepare-agent-integration goals, before the actual tests are run. This sets a property named argLine which
+              points to the JaCoCo agent, later passed as a JVM argument to the test runner -->
+              <argLine>${itCoverageAgent}</argLine>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- findbugs for code quality -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.4</version>
+      </plugin>
+
+      <!-- jacoco for code coverage -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>prepare-unit-tests</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+
+          <!-- prepare agent before integration tests -->
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <propertyName>itCoverageAgent</propertyName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+  </build>
+</project>
