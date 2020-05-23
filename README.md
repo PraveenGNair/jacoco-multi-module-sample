@@ -3,7 +3,7 @@
 ## Overview
 >A sample multi-modular maven project demonstrating how to met coverage for unit, integration and/or functional testing withing different modules.
 >The test results is aggregated by Jacoco plugin and a merged code coverage report is being generated.
->The detailed blog and instructions of the project is described in [blog](https://medium.com/@prgnr173/).
+>The detailed blog and instructions of the project is described in [blog](https://medium.com/@prgnr173/merging-integration-unit-and-functional-test-reports-with-jacoco-de5cde9b56e1).
 
 ## Run Command
 

@@ -1,5 +1,6 @@
 Feature: Do an Integer concatenation
 
+  @Concatenation
   Scenario: Concatenation has to done
     Given that an integer 50
     When number 50 is self concatenated
