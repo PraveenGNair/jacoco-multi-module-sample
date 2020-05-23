@@ -126,6 +126,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -139,6 +140,7 @@
           <runOrder>random</runOrder>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -150,6 +152,7 @@
               <goal>report-aggregate</goal>
             </goals>
           </execution>
+
           <execution>
             <id>merge-results</id>
             <phase>verify</phase>
@@ -168,6 +171,7 @@
               <destFile>${code.coverage.overall.data.folder}/aggregate.exec</destFile>
             </configuration>
           </execution>
+
           <execution>
             <id>check</id>
             <phase>verify</phase>

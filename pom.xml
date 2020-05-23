@@ -8,10 +8,12 @@
   <artifactId>jacoco-multi-module-sample</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+
   <name>jacoco-multi-module-sample</name>
   <description>Example to show how to merge test reports of unit, integration and functional tests
     onto one combined jacoco report.
   </description>
+
   <modules>
     <module>module1</module>
     <module>module2</module>
@@ -43,7 +45,7 @@
   <profiles>
     <!-- profile for Unit test only -->
     <profile>
-      <id>dev</id>
+      <id>unit</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -68,7 +70,8 @@
 
   <build>
     <plugins>
-      <!-- UNIT test 'mvn clean install' (optionally: -P dev) by default skips Integration tests-->
+
+      <!-- UNIT test 'mvn clean install' (optionally: -P unit) by default skips Integration tests-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -116,7 +119,7 @@
         <version>3.0.4</version>
       </plugin>
 
-      <!-- jacoco for code coverage -->
+      <!-- jacoco agent for code coverage -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -128,7 +131,6 @@
               <goal>prepare-agent</goal>
             </goals>
           </execution>
-
           <!-- prepare agent before integration tests -->
           <execution>
             <id>prepare-agent</id>
